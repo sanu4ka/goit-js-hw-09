@@ -2,10 +2,10 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 let timer = null;
 let intervalId = null;
-const SECOND_DELAY = 1000;
+const TIME_DELAY = 1000;
 
 const refs = {
-  inputRef: document.querySelector('#datetime-picker'),
+  inputRef: document.querySelector('input#datetime-picker'),
   startBtnRef: document.querySelector('button[data-start]'),
   daysRef: document.querySelector('span[data-days]'),
   hoursRef: document.querySelector('span[data-hours]'),
@@ -18,18 +18,42 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    if (selectedDates[0] <= Date.now()) {
-      window.alert('Please choose a date in the future');
-      refs.startBtnRef.disabled = true;
-    } else {
-      refs.startBtnRef.disabled = false;
+    if (selectedDates[0] > Date.now()) {
+      refs.startBtnRef.removeAttribute('disabled');
+      return;
     }
+    window.alert('Please choose a date in the future');
+    refs.startBtnRef.setAttribute('disabled', true);
   },
 };
-refs.startBtnRef.disabled = true;
-const fp = flatpickr('input#datetime-picker', options);
 
-function onStartButtonClick(params) {}
+const fp = flatpickr('input#datetime-picker', options);
+refs.startBtnRef.setAttribute('disabled', true);
+refs.startBtnRef.addEventListener('click', onStartButtonClick);
+
+function onStartButtonClick() {
+  refs.startBtnRef.setAttribute('disabled', true);
+  refs.inputRef.setAttribute('disabled', true);
+  intervalId = setInterval(timeCounter, TIME_DELAY);
+}
+
+function timeCounter() {
+  timer = fp.selectedDates[0] - Date.now();
+  if (timer === 0) {
+    clearInterval(intervalId);
+    return;
+  }
+  const { days, hours, minutes, seconds } = convertMs(timer);
+
+  refs.daysRef.textContent = addLeadingZero(days);
+  refs.hoursRef.textContent = addLeadingZero(hours);
+  refs.minsRef.textContent = addLeadingZero(minutes);
+  refs.secsRef.textContent = addLeadingZero(seconds);
+}
+
+function addLeadingZero(value) {
+  return String(value).padStart(2, '0');
+}
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
