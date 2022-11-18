@@ -39,9 +39,9 @@ function onStartButtonClick() {
 
 function timeCounter() {
   timer = fp.selectedDates[0] - Date.now();
-  if (timer === 0) {
+  console.log(timer);
+  if (timer <= 1000) {
     clearInterval(intervalId);
-    return;
   }
   const { days, hours, minutes, seconds } = convertMs(timer);
 

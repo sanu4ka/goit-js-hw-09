@@ -19,11 +19,12 @@ img {
 
 .timer {
   display: flex;
-  flex-direction: column;
-  margin: 20px 10px;
+  justify-content: center;
 }
 
 .value {
   display: inline-block;
-  height: 36px;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 58px;
+  margin: 20px 10px;
 }
